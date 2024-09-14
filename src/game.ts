@@ -1,5 +1,5 @@
 import {PlayerClass} from "./playerClass";
-import {PlayerAction} from "./playerClass";
+import {PlayerAction} from "./playerAction";
 
 class Game {
     private playerOrder: PlayerClass[] = [];

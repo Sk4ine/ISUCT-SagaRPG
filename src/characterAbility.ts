@@ -1,7 +1,7 @@
 import { Game } from "./game";
 import { Logger } from "./logger";
 import {PlayerClass} from "./playerClass";
-import {PlayerAction} from "./playerClass";
+import {PlayerAction} from "./playerAction";
 
 abstract class CharacterAbility {
     public abilityName: string = "";
