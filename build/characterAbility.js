@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FrostArrows = exports.ShieldStrike = exports.Attack = exports.CharacterAbility = void 0;
 const logger_1 = require("./logger");
-const playerClass_1 = require("./playerClass");
+const playerAction_1 = require("./playerAction");
 class CharacterAbility {
     constructor() {
         this.abilityName = "";
@@ -28,7 +28,7 @@ class Attack extends CharacterAbility {
     }
     use(caster, target, game) {
         this.damage = caster.getStrength();
-        new playerClass_1.PlayerAction(game, true, caster, target, 1, this.abilityName, "Attack", this.damage);
+        new playerAction_1.PlayerAction(game, true, caster, target, 1, this.abilityName, "Attack", this.damage);
     }
 }
 exports.Attack = Attack;
@@ -40,7 +40,7 @@ class ShieldStrike extends CharacterAbility {
         this.damage = 3;
     }
     use(caster, target, game) {
-        new playerClass_1.PlayerAction(game, true, caster, target, 1, this.abilityName, "Ability", this.damage);
+        new playerAction_1.PlayerAction(game, true, caster, target, 1, this.abilityName, "Ability", this.damage);
     }
 }
 exports.ShieldStrike = ShieldStrike;
@@ -53,7 +53,7 @@ class FrostArrows extends CharacterAbility {
         this.initializeMaxUses(customMaxUses);
     }
     use(caster, target, game) {
-        new playerClass_1.PlayerAction(game, false, caster, target, 3, this.abilityName, "Effect", this.damage);
+        new playerAction_1.PlayerAction(game, false, caster, target, 3, this.abilityName, "Effect", this.damage);
         logger_1.Logger.effectCast(caster.getClassName(), caster.getPlayerName(), this.abilityName, target.getClassName(), target.getPlayerName());
     }
 }
