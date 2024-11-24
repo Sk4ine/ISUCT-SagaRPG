@@ -1,9 +1,8 @@
-import {PlayerClass} from "./playerClass";
-import {PlayerAction} from "./playerAction";
+import { Logger } from "./logger";
+import {PlayerClass} from "./playerClasses/playerClass";
 
 class Game {
     private playerOrder: PlayerClass[] = [];
-    private actionsQueue: PlayerAction[] = [];
 
     public constructor(player1: PlayerClass, player2: PlayerClass) {
         this.playerOrder.push(player1);
@@ -12,18 +11,17 @@ class Game {
         this.playerOrder[1].game = this;
     }
 
-    private getResult(): PlayerClass[] {
-        if(this.playerOrder[0].getHealth() > 0) {
-            return [this.playerOrder[0], this.playerOrder[1]];
+    private getLoser(): PlayerClass {
+        if(this.playerOrder[0].health > 0) {
+            return this.playerOrder[1];
         }
-        else {
-            return [this.playerOrder[1], this.playerOrder[0]];
-        }
+
+        return this.playerOrder[0];
     }
     
-    private executeActionsQueue(): void {
-        for(let i = this.actionsQueue.length - 1; i > -1; i--) {
-            this.actionsQueue[i].execute();
+    private executePlayerEffects(): void {
+        for(let i = 0; i < this.playerOrder.length; i++) {
+            this.playerOrder[i].executeEffects();
         }
     }
     
@@ -34,27 +32,14 @@ class Game {
     }
     
     public startGame(): void {
-        while(this.playerOrder[0].getHealth() > 0 && this.playerOrder[1].getHealth() > 0) {
-            this.executeActionsQueue();
+        while(this.playerOrder[0].health > 0 && this.playerOrder[1].health > 0) {
+            this.executePlayerEffects();
             this.playerOrder[0].useAbility(this.playerOrder[1]);
             this.swapTurn();
         }
         
-        let result = this.getResult();
-        console.log(`(${result[1].getClassName()}) ${result[1].getPlayerName()} dies`);
-    }
-
-    public addToActionsQueue(action: PlayerAction): void {
-        this.actionsQueue.push(action);
-    }
-
-    public removeFromActionsQueue(action: PlayerAction): void {
-        let index = this.actionsQueue.indexOf(action);
-        this.actionsQueue.splice(index, 1);
-    }
-
-    public executeLastFromActionsQueue(): void {
-        this.actionsQueue[this.actionsQueue.length - 1].execute();
+        let loser = this.getLoser();
+        console.log(`(${Logger.playerClassNames[loser.classID]}) ${loser.playerName} dies`);
     }
 }
 

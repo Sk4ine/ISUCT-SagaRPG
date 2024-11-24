@@ -1,5 +1,6 @@
-import {Paladin, Archer} from "./playerClass";
 import {Game} from "./game";
+import { Paladin } from "./playerClasses/paladin";
+import { Archer } from "./playerClasses/archer";
 
 let player1: Paladin = new Paladin("George");
 let player2: Archer = new Archer("Arthur");

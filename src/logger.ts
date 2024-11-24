@@ -1,4 +1,31 @@
+import { Abilities, AbilityTypes } from "./characterAbilities/characterAbility";
+import { PlayerClasses } from "./playerClasses/playerClass";
+
 abstract class Logger {
+    
+    public static abilityNames = [
+        "Attack",
+        "Shield Strike",
+        "Frost Arrows"
+    ];
+
+    public static playerClassNames = [
+        "Paladin",
+        "Archer"
+    ];
+
+    public static logOutput(casterClass: PlayerClasses, casterName: string, targetClass: PlayerClasses, targetName: string, damage: number, ability: Abilities, abilityType: AbilityTypes): void {
+        if(abilityType == AbilityTypes.Attack) {
+            this.attack(this.playerClassNames[casterClass], casterName, damage, this.playerClassNames[targetClass], targetName);
+        }
+        else if(abilityType == AbilityTypes.Ability) {
+            this.ability(this.playerClassNames[casterClass], casterName, this.abilityNames[ability], damage, this.playerClassNames[targetClass], targetName);
+        }
+        else if(abilityType == AbilityTypes.Effect) {
+            this.effectTick(this.abilityNames[ability], damage, this.playerClassNames[targetClass], targetName);
+        }
+    }
+
     public static attack(casterClass: string, casterName: string, attackDamage: number, targetClass: string, targetName: string): void {
         console.log(`(${casterClass}) ${casterName} deals ${attackDamage} damage to (${targetClass}) ${targetName}`);
     }
