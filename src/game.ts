@@ -7,8 +7,6 @@ class Game {
     public constructor(player1: PlayerClass, player2: PlayerClass) {
         this.playerOrder.push(player1);
         this.playerOrder.push(player2);
-        this.playerOrder[0].game = this;
-        this.playerOrder[1].game = this;
     }
 
     private getLoser(): PlayerClass {

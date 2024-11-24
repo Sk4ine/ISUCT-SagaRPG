@@ -41,27 +41,11 @@ export abstract class PlayerClass extends Player {
     protected abilitiesLeft: number[] = [];
     protected abilitiesUsed: number[] = Array(this.abilities.length).fill(0);
 
-    protected _game: Game | undefined;
-    get game(): Game {
-        if(this._game) {
-            return this._game;
-        }
-
-        throw new Error("Player's 'game' field is undefined");
-    }
-    set game(value: Game) {
-        this._game = value;
-    }
-
     public constructor(playerName: string) {
         super(playerName, null);
     }
 
-    public useAbility(target: PlayerClass): void {
-        if(!this._game) {
-            throw new Error("Player game is not defined");
-        }
-        
+    public useAbility(target: PlayerClass): void { 
         if(this.abilitiesLeft.length == 0) {
             return;
         }

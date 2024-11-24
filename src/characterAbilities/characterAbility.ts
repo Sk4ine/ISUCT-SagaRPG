@@ -12,7 +12,6 @@ export enum Abilities {
     FrostArrows
 }
 
-
 export abstract class CharacterAbility {
     protected _abilityID: Abilities | undefined;
     public get abilityID(): Abilities {
