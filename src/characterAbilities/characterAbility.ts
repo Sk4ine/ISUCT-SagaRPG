@@ -1,4 +1,3 @@
-import { Game } from "../game";
 import {PlayerClass} from "../playerClasses/playerClass";
 
 export enum AbilityTypes {
@@ -38,7 +37,7 @@ export abstract class CharacterAbility {
         return this._damage;
     }
 
-    public abstract use(caster: PlayerClass, target: PlayerClass, game: Game): void;
+    public abstract use(caster: PlayerClass, target: PlayerClass): void;
 
     protected initializeMaxUses(customMaxUses: number | undefined): void {
         if(customMaxUses) {

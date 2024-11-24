@@ -69,13 +69,7 @@ export abstract class PlayerClass extends Player {
         let chosenAbilityIndex: number = this.abilitiesLeft[Math.floor(Math.random() * this.abilitiesLeft.length)];
         let chosenAbility: CharacterAbility = this.abilities[chosenAbilityIndex];
 
-        if(target.checkAbilityResist(chosenAbility.abilityID)) {
-            Logger.resist(Logger.abilityNames[this.classID], this.playerName, Logger.abilityNames[chosenAbility.abilityID], 
-            Logger.playerClassNames[target.classID], target.playerName);
-        }
-        else {
-            chosenAbility.use(this, target, this._game);
-        }
+        chosenAbility.use(this, target);
 
         this.abilitiesUsed[chosenAbilityIndex]++;
 
@@ -106,7 +100,6 @@ export abstract class PlayerClass extends Player {
     public applyEffect(effect: Effect) {
         for(let i = 0; i < this.appliedEffects.length; i++) {
             if(this.appliedEffects[i].abilityID == effect.abilityID) {
-                console.log(effect.turnsRemaining);
                 this.appliedEffects[i].turnsRemaining = effect.turnsRemaining;
                 return;
             }
