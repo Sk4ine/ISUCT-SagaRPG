@@ -15,8 +15,7 @@ export class FrostArrows extends CharacterAbility {
   }
 
   public override use(caster: PlayerClass, target: PlayerClass): void {
-      Logger.effectCast(Logger.playerClassNames[caster.classID], caster.playerName, Logger.abilityNames[this.abilityID], 
-          Logger.playerClassNames[target.classID], target.playerName);
+      console.log(Logger.effectCast(caster.classID, caster.playerName, this.abilityID, target.classID, target.playerName));
 
       target.applyEffect(new Effect(this.abilityID, false, caster, target, this.durationInTurns, this.damage));
   }

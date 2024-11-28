@@ -1,5 +1,6 @@
 import { PlayerClass } from "./playerClasses/playerClass";
 import { Abilities, AbilityTypes } from "./characterAbilities/characterAbility";
+import { Logger } from "./logger";
 
 export class Effect {
   private _abilityID: Abilities;

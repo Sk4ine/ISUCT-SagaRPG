@@ -103,8 +103,7 @@ export abstract class PlayerClass extends Player {
     
     public applyAbility(caster: PlayerClass, ability: Abilities, abilityType: AbilityTypes, damage: number) {
         if(this.checkAbilityResist(ability)) {
-            Logger.resist(Logger.abilityNames[this.classID], this.playerName, Logger.abilityNames[ability], 
-                Logger.playerClassNames[this.classID], this.playerName);
+            console.log(Logger.resist(this.classID, this.playerName, ability, this.classID, this.playerName));
             return;
         }
 
