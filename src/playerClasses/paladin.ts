@@ -5,7 +5,7 @@ import { PlayerClass, PlayerClasses } from "./playerClass";
 
 export class Paladin extends PlayerClass {
   protected _classID = PlayerClasses.Paladin;
-  protected maxHealth = 10;
+  protected _maxHealth = 10;
   protected _strength = 2;
   protected abilities = [new ShieldStrike(), new FrostArrows(), new Attack()];
   protected abilitiesResists = [];

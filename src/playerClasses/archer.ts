@@ -5,7 +5,7 @@ import { PlayerClass, PlayerClasses } from "./playerClass";
 
 export class Archer extends PlayerClass {
   protected _classID = PlayerClasses.Archer;
-  protected maxHealth = 7;
+  protected _maxHealth = 7;
   protected _strength = 3;
   protected abilities = [new FrostArrows(2), new Attack()];
   protected abilitiesResists = [Abilities.FrostArrows];

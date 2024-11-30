@@ -1,6 +1,5 @@
 import { PlayerClass } from "./playerClasses/playerClass";
 import { Abilities, AbilityTypes } from "./characterAbilities/characterAbility";
-import { Logger } from "./logger";
 
 export class Effect {
   private _abilityID: Abilities;
@@ -21,9 +20,13 @@ export class Effect {
     throw new Error("Attempt to set effect's 'turnsRemaining' to a negative value");
   }
 
+  private _damage: number = 0;
+  get damage(): number {
+    return this._damage;
+  }
+
   private caster: PlayerClass;
   private target: PlayerClass;
-  private damage: number = 0;
 
   public constructor(ability: Abilities, executeOnCreation: boolean, caster: PlayerClass, target: PlayerClass, turnsRemaining: number, damage: number) {
     this._abilityID = ability;
@@ -32,7 +35,7 @@ export class Effect {
     this.target = target;
 
     if(damage !== undefined) {
-        this.damage = damage;
+        this._damage = damage;
     }
     
     if(executeOnCreation) {

@@ -1,6 +1,5 @@
 import {CharacterAbility, Abilities, AbilityTypes} from "../characterAbilities/characterAbility";
 import { Effect } from "../effect";
-import { Game } from "../game";
 import { Logger } from "../logger";
 import { Player } from "./player";
 
@@ -12,19 +11,23 @@ export enum PlayerClasses {
 export abstract class PlayerClass extends Player {
     protected abilities: CharacterAbility[] = [];
     protected abilitiesResists: Abilities[] = [];
-    protected maxHealth: number = 0;
     protected _strength: number = 0;
     get strength(): number {
         return this._strength;
     }
 
-    protected _health: number = this.maxHealth;
+    protected _maxHealth: number = 0;
+    get maxHealth(): number {
+        return this._maxHealth;
+    }
+
+    protected _health: number = this._maxHealth;
     get health(): number {
         return this._health;
     }
-    set health(value: number) {
-        if(value > this.maxHealth) {
-            this._health = this.maxHealth;
+    private set health(value: number) {
+        if(value > this._maxHealth) {
+            this._health = this._maxHealth;
             return;
         }
 
@@ -36,7 +39,10 @@ export abstract class PlayerClass extends Player {
         this._health = value;
     }
 
-    protected appliedEffects: Effect[] = [];
+    protected _appliedEffects: Effect[] = [];
+    get appliedEffects(): Effect[] {
+        return this._appliedEffects;
+    }
 
     protected abilitiesLeft: number[] = [];
     protected abilitiesUsed: number[] = Array(this.abilities.length).fill(0);
@@ -74,7 +80,7 @@ export abstract class PlayerClass extends Player {
     }
 
     protected resetStats(): void {
-        this._health = this.maxHealth;
+        this._health = this._maxHealth;
         this.abilitiesUsed = Array(this.abilities.length).fill(0);
         for(let i = 0; i < this.abilities.length; i++) {
             this.abilitiesLeft.push(i);
@@ -82,21 +88,21 @@ export abstract class PlayerClass extends Player {
     }
 
     public applyEffect(effect: Effect) {
-        for(let i = 0; i < this.appliedEffects.length; i++) {
-            if(this.appliedEffects[i].abilityID == effect.abilityID) {
-                this.appliedEffects[i].turnsRemaining = effect.turnsRemaining;
+        for(let i = 0; i < this._appliedEffects.length; i++) {
+            if(this._appliedEffects[i].abilityID == effect.abilityID) {
+                this._appliedEffects[i].turnsRemaining = effect.turnsRemaining;
                 return;
             }
         }
 
-        this.appliedEffects.push(effect);
+        this._appliedEffects.push(effect);
     }
 
     public executeEffects() {
-        for(let i = this.appliedEffects.length - 1; i >= 0; i--) {
-            this.appliedEffects[i].execute();
-            if(this.appliedEffects[i].turnsRemaining == 0) {
-                this.appliedEffects.splice(i, 1);
+        for(let i = this._appliedEffects.length - 1; i >= 0; i--) {
+            this._appliedEffects[i].execute();
+            if(this._appliedEffects[i].turnsRemaining == 0) {
+                this._appliedEffects.splice(i, 1);
             }
         }
     }
