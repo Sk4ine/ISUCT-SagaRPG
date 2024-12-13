@@ -13,6 +13,6 @@ describe("FrostArrows class", () => {
     it("Use method", () => {
         frostArrows.use(player1, player2);
 
-        expect(player2.appliedEffects[0].abilityID).toBe(Abilities.FrostArrows);
+        expect(player2.appliedEffects[0].ability.abilityID).toBe(Abilities.FrostArrows);
     });
 });

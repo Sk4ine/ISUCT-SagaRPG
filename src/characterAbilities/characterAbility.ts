@@ -3,7 +3,7 @@ import {PlayerClass} from "../playerClasses/playerClass";
 export enum AbilityTypes {
     Attack,
     Ability,
-    Effect
+    EffectAbility
 }
 
 export enum Abilities {
@@ -20,6 +20,15 @@ export abstract class CharacterAbility {
         }
         
         throw new Error("abilityID is undefined");
+    }
+
+    protected _abilityType: AbilityTypes | undefined;
+    public get abilityType(): AbilityTypes {
+        if(this._abilityType !== undefined) {
+            return this._abilityType;
+        }
+
+        throw new Error("abilityType is undefined");
     }
 
     protected _maxUses: number | undefined;

@@ -1,5 +1,6 @@
 import { Abilities, AbilityTypes } from "./characterAbilities/characterAbility";
-import { PlayerClasses } from "./playerClasses/playerClass";
+import { Effect, Effects } from "./effects/effect";
+import { PlayerClass, PlayerClasses } from "./playerClasses/playerClass";
 
 abstract class Logger {
     
@@ -14,22 +15,35 @@ abstract class Logger {
         "Archer"
     ];
 
-    public static logOutput(casterClassID: PlayerClasses, casterName: string, targetClassID: PlayerClasses, targetName: string, damage: number, abilityID: Abilities, abilityType: AbilityTypes): void {
+    public static effectNames = [
+        "Frost"
+    ];
+    
+    public static logAbilityUse(caster: PlayerClass, target: PlayerClass, damage: number, abilityID: Abilities, abilityType: AbilityTypes): void {
         let message: string = "";
         
         if(abilityType == AbilityTypes.Attack) {
-            message = this.attack(casterClassID, casterName, damage, targetClassID, targetName);
+            message = this.attack(caster.classID, caster.playerName, damage, target.classID, target.playerName);
         }
         else if(abilityType == AbilityTypes.Ability) {
-            message = this.ability(casterClassID, casterName, abilityID, damage, targetClassID, targetName);
-        }
-        else if(abilityType == AbilityTypes.Effect) {
-            message = this.effectTick(abilityID, damage, targetClassID, targetName);
+            message = this.ability(caster.classID, caster.playerName, abilityID, damage, target.classID, target.playerName);
         }
 
         console.log(message);
     }
 
+    public static logResist(caster: PlayerClass, abilityID: Abilities, target: PlayerClass): void {
+        console.log(this.resist(caster.classID, caster.playerName, abilityID, target.classID, target.playerName))
+    }
+
+    public static logEffectCast(caster: PlayerClass, effectAbility: Abilities, effectID: Effects, target: PlayerClass): void {
+        console.log(this.effectCast(caster.classID, caster.playerName, effectAbility, effectID, target.classID, target.playerName));
+    }
+
+    public static logEffectTick(effect: Effect, target: PlayerClass): void {
+        console.log(this.effectTick(effect.effectID, effect.damage, target.classID, target.playerName));
+    }
+    
     public static attack(casterClassID: PlayerClasses, casterName: string, attackDamage: number, targetClassID: PlayerClasses, targetName: string): string {
         return `(${this.playerClassNames[casterClassID]}) ${casterName} deals ${attackDamage} damage to (${this.playerClassNames[targetClassID]}) ${targetName}`;
     }
@@ -38,12 +52,12 @@ abstract class Logger {
         return `(${this.playerClassNames[casterClassID]}) ${casterName} is using (${this.abilityNames[abilityID]}) dealing ${abilityDamage} damage to (${this.playerClassNames[targetClassID]}) ${targetName}`;
     }
 
-    public static effectCast(casterClassID: PlayerClasses, casterName: string, effectID: Abilities, targetClassID: PlayerClasses, targetName: string): string {
-        return `(${this.playerClassNames[casterClassID]}) ${casterName} applies (${this.abilityNames[effectID]}) on (${this.playerClassNames[targetClassID]}) ${targetName}`;
+    public static effectCast(casterClassID: PlayerClasses, casterName: string, abilityID: Abilities, effectID: Effects, targetClassID: PlayerClasses, targetName: string): string {
+        return `(${this.playerClassNames[casterClassID]}) ${casterName} uses (${this.abilityNames[abilityID]}) and applies (${this.effectNames[effectID]}) on (${this.playerClassNames[targetClassID]}) ${targetName}`;
     }
 
-    public static effectTick(effectID: Abilities, effectDamage: number, targetClassID: PlayerClasses, targetName: string): string {
-        return `(${this.abilityNames[effectID]}) deals ${effectDamage} tick damage to (${this.playerClassNames[targetClassID]}) ${targetName}`;
+    public static effectTick(effectID: Effects, effectDamage: number, targetClassID: PlayerClasses, targetName: string): string {
+        return `(${this.effectNames[effectID]}) deals ${effectDamage} tick damage to (${this.playerClassNames[targetClassID]}) ${targetName}`;
     }
 
     public static resist(casterClassID: PlayerClasses, casterName: string, abilityID: Abilities, targetClassID: PlayerClasses, targetName: string): string {

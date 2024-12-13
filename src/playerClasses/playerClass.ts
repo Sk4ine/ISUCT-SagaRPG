@@ -1,5 +1,5 @@
 import {CharacterAbility, Abilities, AbilityTypes} from "../characterAbilities/characterAbility";
-import { Effect } from "../effect";
+import { Effect } from "../effects/effect";
 import { Logger } from "../logger";
 import { Player } from "./player";
 
@@ -59,7 +59,12 @@ export abstract class PlayerClass extends Player {
         let chosenAbilityIndex: number = this.abilitiesLeft[Math.floor(Math.random() * this.abilitiesLeft.length)];
         let chosenAbility: CharacterAbility = this.abilities[chosenAbilityIndex];
 
-        chosenAbility.use(this, target);
+        if(!target.checkAbilityResist(chosenAbility.abilityID)) {
+            chosenAbility.use(this, target);
+        }
+        else {
+            Logger.logResist(this, chosenAbility.abilityID, target);
+        }
 
         this.abilitiesUsed[chosenAbilityIndex]++;
 
@@ -87,9 +92,17 @@ export abstract class PlayerClass extends Player {
         }
     }
 
+    public dealDamage(damage: number): void {
+        if(damage < 0) {
+            throw new Error("Tried to deal negative damage to player");
+        }
+
+        this.health -= damage;
+    }
+
     public applyEffect(effect: Effect) {
         for(let i = 0; i < this._appliedEffects.length; i++) {
-            if(this._appliedEffects[i].abilityID == effect.abilityID) {
+            if(this._appliedEffects[i].effectID == effect.effectID) {
                 this._appliedEffects[i].turnsRemaining = effect.turnsRemaining;
                 return;
             }
@@ -98,7 +111,7 @@ export abstract class PlayerClass extends Player {
         this._appliedEffects.push(effect);
     }
 
-    public executeEffects() {
+    public executeAppliedEffects() {
         for(let i = this._appliedEffects.length - 1; i >= 0; i--) {
             this._appliedEffects[i].execute();
             if(this._appliedEffects[i].turnsRemaining == 0) {
@@ -107,13 +120,22 @@ export abstract class PlayerClass extends Player {
         }
     }
     
-    public applyAbility(caster: PlayerClass, ability: Abilities, abilityType: AbilityTypes, damage: number) {
-        if(this.checkAbilityResist(ability)) {
-            console.log(Logger.resist(this.classID, this.playerName, ability, this.classID, this.playerName));
+    public applyAbility(caster: PlayerClass, ability: CharacterAbility, damage: number) {
+        if(this.checkAbilityResist(ability.abilityID)) {
+            console.log(Logger.resist(this.classID, this.playerName, ability.abilityID, this.classID, this.playerName));
             return;
         }
 
         this.health = this.health - damage;
-        Logger.logOutput(caster.classID, caster.playerName, this.classID, this.playerName, damage, ability, abilityType);
+        Logger.logAbilityUse(caster.classID, caster.playerName, this.classID, this.playerName, damage, ability.abilityID, ability.abilityType) ;
+    }
+
+    public makeTurn(target: PlayerClass): void {
+        this.executeAppliedEffects();
+        if(this.health < 0) {
+            return;
+        }
+
+        this.useAbility(target);
     }
 }

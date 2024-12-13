@@ -14,12 +14,6 @@ class Game {
         return this._players[this.playerTurn];
     }
     
-    private executePlayerEffects(): void {
-        for(let i = 0; i < this._players.length; i++) {
-            this._players[i].executeEffects();
-        }
-    }
-    
     private swapTurn(): void {
         this.playerTurn++;
 
@@ -27,11 +21,20 @@ class Game {
             this.playerTurn = 0;
         }
     }
+
+    private getTarget(): PlayerClass {
+        let targetIndex = this.playerTurn;
+
+        targetIndex++;
+
+        if(targetIndex > 1) targetIndex = 0;
+
+        return this._players[targetIndex];
+    }
     
     public startGame(): void {
         while(this._players[0].health > 0 && this._players[1].health > 0) {
-            this.executePlayerEffects();
-            this._players[0].useAbility(this._players[1]);
+            this._players[this.playerTurn].makeTurn(this.getTarget());
             this.swapTurn();
         }
         

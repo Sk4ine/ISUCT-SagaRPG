@@ -1,5 +1,7 @@
+import { Attack } from "../src/characterAbilities/attack";
 import { Abilities, AbilityTypes } from "../src/characterAbilities/characterAbility";
-import { Effect } from "../src/effect";
+import { FrostArrows } from "../src/characterAbilities/frostArrows";
+import { Effect } from "../src/effects/effect";
 import { Archer } from "../src/playerClasses/archer";
 import { Paladin } from "../src/playerClasses/paladin";
 import { PlayerClass } from "../src/playerClasses/playerClass";
@@ -29,14 +31,14 @@ describe("PlayerClass class", () => {
     });
 
     it("ApplyEffect method", () => {
-        const effect = new Effect(Abilities.FrostArrows, false, player2, player1, 3, 2);
+        const effect = new Effect(new FrostArrows(), false, player2, player1, 3, 2);
         player1.applyEffect(effect);
 
         expect(player1.appliedEffects[0]).toBe(effect);
     });
 
     it("ApplyAbility method", () => {
-        player1.applyAbility(player2, Abilities.Attack, AbilityTypes.Attack, player2.strength);
+        player1.applyAbility(player2, new Attack(), player2.strength);
 
         expect(player1.health).toBe(player1.maxHealth - player2.strength);
     });
