@@ -1,10 +1,6 @@
 import { Attack } from "../../src/characterAbilities/attack";
-import { Abilities, AbilityTypes } from "../../src/characterAbilities/characterAbility";
-import { FrostArrows } from "../../src/characterAbilities/frostArrows";
-import { Effect } from "../../src/effects/effect";
+import { Abilities } from "../../src/characterAbilities/characterAbility";
 import { FrostEffect } from "../../src/effects/frostEffect";
-import { Archer } from "../../src/playerClasses/archer";
-import { Paladin } from "../../src/playerClasses/paladin";
 import { PlayerClass, PlayerClasses } from "../../src/playerClasses/playerClass";
 import { PlayerGenerator } from "../../src/playerGenerator";
 

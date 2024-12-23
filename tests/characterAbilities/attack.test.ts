@@ -1,7 +1,5 @@
 import { Attack } from "../../src/characterAbilities/attack";
 import { CharacterAbility } from "../../src/characterAbilities/characterAbility";
-import { Archer } from "../../src/playerClasses/archer";
-import { Paladin } from "../../src/playerClasses/paladin";
 import { PlayerClass, PlayerClasses } from "../../src/playerClasses/playerClass";
 import { PlayerGenerator } from "../../src/playerGenerator";
 
