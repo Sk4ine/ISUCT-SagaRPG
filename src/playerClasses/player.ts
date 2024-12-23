@@ -1,22 +1,22 @@
 import { PlayerClasses } from "./playerClass";
 
 export abstract class Player {
-  protected _playerName: string = "";
-  get playerName(): string {
-      return this._playerName;
-  }
+    protected _playerName: string = "";
+    public get playerName(): string {
+        return this._playerName;
+    }
 
-  protected _classID: PlayerClasses | null;
-  get classID(): PlayerClasses {
-      if(this._classID !== null) {
-          return this._classID;
-      }
+    protected _classID: PlayerClasses | null;
+    public get classID(): PlayerClasses {
+        if(this._classID === null) {
+            throw new Error("className is undefined");
+        }
 
-      throw new Error("className is undefined");
-  }
-  
-  public constructor(playerName: string, className: PlayerClasses | null) {
-      this._playerName = playerName;
-      this._classID = className;
-  }
+        return this._classID;
+    }
+
+    public constructor(playerName: string, className: PlayerClasses | null) {
+        this._playerName = playerName;
+        this._classID = className;
+    }
 }

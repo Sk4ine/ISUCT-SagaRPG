@@ -47,7 +47,7 @@ export abstract class CharacterAbility {
 
     public abstract use(caster: PlayerClass, target: PlayerClass): void;
 
-    protected initializeMaxUses(customMaxUses: number | undefined): void {
+    protected initializeMaxUses(customMaxUses?: number): void {
         if(customMaxUses) {
             this._maxUses = customMaxUses;
             return;

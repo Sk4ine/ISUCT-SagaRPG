@@ -1,8 +1,10 @@
 import {Game} from "./game";
-import { Paladin } from "./playerClasses/paladin";
-import { Archer } from "./playerClasses/archer";
+import { PlayerGenerator } from "./playerGenerator";
+import { PlayerClass, PlayerClasses } from "./playerClasses/playerClass";
+import { Logger } from "./logger";
 
-let player1: Paladin = new Paladin("George");
-let player2: Archer = new Archer("Arthur");
+let player1: PlayerClass = PlayerGenerator.createPlayer(PlayerClasses.Paladin, "Arthur", undefined, undefined, 1);
+let player2: PlayerClass = PlayerGenerator.createPlayer(PlayerClasses.Archer, "George");
 let game: Game = new Game(player1, player2);
-game.startGame();
+const winner: PlayerClass = game.playGame();
+Logger.logPlayerWin(winner);

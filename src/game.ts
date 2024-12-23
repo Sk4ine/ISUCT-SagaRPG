@@ -1,17 +1,23 @@
 import { Logger } from "./logger";
-import {PlayerClass} from "./playerClasses/playerClass";
+import { PlayerClass } from "./playerClasses/playerClass";
 
-class Game {
-    private _players: PlayerClass[] = [];
+export class Game {
+    private players: PlayerClass[] = [];
     private playerTurn = 0;
 
     public constructor(player1: PlayerClass, player2: PlayerClass) {
-        this._players.push(player1);
-        this._players.push(player2);
+        this.players.push(player1);
+        this.players.push(player2);
     }
 
-    private getLoser(): PlayerClass {
-        return this._players[this.playerTurn];
+    private getWinner(): PlayerClass {
+        for(let i = 0; i < this.players.length; i++) {
+            if(this.players[i].health > 0) {
+                return this.players[i];
+            }
+        }
+
+        throw new Error("Couldn't get game winner");
     }
     
     private swapTurn(): void {
@@ -29,18 +35,18 @@ class Game {
 
         if(targetIndex > 1) targetIndex = 0;
 
-        return this._players[targetIndex];
+        return this.players[targetIndex];
     }
     
-    public startGame(): void {
-        while(this._players[0].health > 0 && this._players[1].health > 0) {
-            this._players[this.playerTurn].makeTurn(this.getTarget());
+    public playGame(): PlayerClass {
+        Logger.logPlayerStats(this.players[0]);
+        Logger.logPlayerStats(this.players[1]);
+
+        while(this.players[0].health > 0 && this.players[1].health > 0) {
+            this.players[this.playerTurn].makeTurn(this.getTarget());
             this.swapTurn();
         }
         
-        let loser = this.getLoser();
-        console.log(`(${Logger.playerClassNames[loser.classID]}) ${loser.playerName} dies`);
+        return this.getWinner();
     }
 }
-
-export {Game};

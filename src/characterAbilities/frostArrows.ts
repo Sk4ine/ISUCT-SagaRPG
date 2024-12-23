@@ -1,6 +1,4 @@
-import { Effect, Effects } from "../effects/effect";
 import { FrostEffect } from "../effects/frostEffect";
-import { Logger } from "../logger";
 import { PlayerClass } from "../playerClasses/playerClass";
 import { Abilities, AbilityTypes, CharacterAbility } from "./characterAbility";
 
@@ -17,7 +15,6 @@ export class FrostArrows extends CharacterAbility {
   }
 
   public override use(caster: PlayerClass, target: PlayerClass): void {
-      target.applyEffect(new FrostEffect(caster, target, this.durationInTurns));
-      Logger.logEffectCast(caster, this.abilityID, Effects.Frost, target);
+      target.applyEffect(new FrostEffect(caster, this.abilityID, this.durationInTurns));
   }
 }

@@ -1,4 +1,4 @@
-import {CharacterAbility, Abilities, AbilityTypes} from "../characterAbilities/characterAbility";
+import { CharacterAbility, Abilities } from "../characterAbilities/characterAbility";
 import { Effect } from "../effects/effect";
 import { Logger } from "../logger";
 import { Player } from "./player";
@@ -10,24 +10,51 @@ export enum PlayerClasses {
 
 export abstract class PlayerClass extends Player {
     protected abilities: CharacterAbility[] = [];
-    protected abilitiesResists: Abilities[] = [];
-    protected _strength: number = 0;
-    get strength(): number {
+    protected abilityResists: Abilities[] = [];
+
+    protected _strength: number | undefined;
+    public get strength(): number {
+        if(this._strength === undefined) {
+            throw new Error("Player's strength is undefined");
+        }
+
         return this._strength;
     }
+    protected set strength(value) {
+        if(value < 0) {
+            throw new Error("Trying to set player's strength to a negative value");
+        }
 
-    protected _maxHealth: number = 0;
-    get maxHealth(): number {
+        this._strength = value;
+    }
+
+    protected _maxHealth: number | undefined;
+    public get maxHealth(): number {
+        if(this._maxHealth === undefined) {
+            throw new Error("Player's maxHealth is undefined");
+        }
+
         return this._maxHealth;
     }
+    protected set maxHealth(value: number) {
+        if(value < 0) {
+            throw new Error("Trying to set player's maxHealth to a negative value");
+        }
 
-    protected _health: number = this._maxHealth;
-    get health(): number {
+        this._maxHealth = value;
+    }
+
+    protected _health: number | undefined;
+    public get health(): number {
+        if(this._health === undefined) {
+            throw new Error("Player's health is undefined");
+        }
+
         return this._health;
     }
-    private set health(value: number) {
-        if(value > this._maxHealth) {
-            this._health = this._maxHealth;
+    protected set health(value: number) {
+        if(value > this.maxHealth) {
+            this._health = this.maxHealth;
             return;
         }
 
@@ -40,15 +67,23 @@ export abstract class PlayerClass extends Player {
     }
 
     protected _appliedEffects: Effect[] = [];
-    get appliedEffects(): Effect[] {
+    public get appliedEffects(): Effect[] {
         return this._appliedEffects;
     }
 
     protected abilitiesLeft: number[] = [];
     protected abilitiesUsed: number[] = Array(this.abilities.length).fill(0);
 
-    public constructor(playerName: string) {
+    protected randomGenerationValues: {maxHealthRange: number[], strengthRange: number[]} = {
+        maxHealthRange: [-1, -1],
+        strengthRange: [-1, -1]
+    };
+
+    public constructor(playerName: string, strength?: number, maxHealth?: number) {
         super(playerName, null);
+
+        if(maxHealth !== undefined) this.maxHealth = maxHealth;
+        if(strength !== undefined) this.strength = strength;
     }
 
     public useAbility(target: PlayerClass): void { 
@@ -56,16 +91,11 @@ export abstract class PlayerClass extends Player {
             return;
         }
 
-        let chosenAbilityIndex: number = this.abilitiesLeft[Math.floor(Math.random() * this.abilitiesLeft.length)];
-        let chosenAbility: CharacterAbility = this.abilities[chosenAbilityIndex];
+        const chosenAbilityIndex: number = this.abilitiesLeft[Math.floor(Math.random() * this.abilitiesLeft.length)];
+        const chosenAbility: CharacterAbility = this.abilities[chosenAbilityIndex];
 
-        if(!target.checkAbilityResist(chosenAbility.abilityID)) {
-            chosenAbility.use(this, target);
-        }
-        else {
-            Logger.logResist(this, chosenAbility.abilityID, target);
-        }
-
+        chosenAbility.use(this, target);
+        
         this.abilitiesUsed[chosenAbilityIndex]++;
 
         if(this.abilitiesUsed[chosenAbilityIndex] == chosenAbility.maxUses) {
@@ -74,9 +104,9 @@ export abstract class PlayerClass extends Player {
         }
     }
 
-    public checkAbilityResist(abilityID: Abilities): boolean {
-        for(let resist in this.abilitiesResists) {
-            if(this.abilitiesResists[resist] != abilityID) {
+    protected checkAbilityResist(abilityID: Abilities): boolean {
+        for(let resist in this.abilityResists) {
+            if(this.abilityResists[resist] != abilityID) {
                 continue;
             }
             return true;
@@ -84,50 +114,70 @@ export abstract class PlayerClass extends Player {
         return false;
     }
 
+    protected generateRandomStats(health?: number): void {
+        if(this._maxHealth === undefined) {
+            this.maxHealth = Math.floor(Math.random() *
+                (this.randomGenerationValues.maxHealthRange[1] - this.randomGenerationValues.maxHealthRange[0]) + this.randomGenerationValues.maxHealthRange[0])
+        }
+
+        if(this._strength === undefined) {
+            this.strength = Math.floor(Math.random() *
+                (this.randomGenerationValues.strengthRange[1] - this.randomGenerationValues.strengthRange[0]) + this.randomGenerationValues.strengthRange[0])
+        }
+
+        if(health === undefined) {
+            this._health = this.maxHealth;
+            return;
+        }
+        
+        this.health = health;
+    }
+
     protected resetStats(): void {
-        this._health = this._maxHealth;
         this.abilitiesUsed = Array(this.abilities.length).fill(0);
         for(let i = 0; i < this.abilities.length; i++) {
             this.abilitiesLeft.push(i);
         }
     }
 
-    public dealDamage(damage: number): void {
-        if(damage < 0) {
-            throw new Error("Tried to deal negative damage to player");
+    public applyEffect(effect: Effect) {
+        if(this.checkAbilityResist(effect.abilityID)) {
+            Logger.logResist(effect.caster, effect.abilityID, this);
+            return;
         }
 
-        this.health -= damage;
-    }
-
-    public applyEffect(effect: Effect) {
         for(let i = 0; i < this._appliedEffects.length; i++) {
-            if(this._appliedEffects[i].effectID == effect.effectID) {
+            if(this._appliedEffects[i].abilityID == effect.abilityID) {
                 this._appliedEffects[i].turnsRemaining = effect.turnsRemaining;
                 return;
             }
         }
 
         this._appliedEffects.push(effect);
+        Logger.logEffectCast(effect.caster, effect.abilityID, effect.effectID, this);
     }
 
-    public executeAppliedEffects() {
+    protected executeAppliedEffects() {
         for(let i = this._appliedEffects.length - 1; i >= 0; i--) {
-            this._appliedEffects[i].execute();
+            this._appliedEffects[i].execute(this);
             if(this._appliedEffects[i].turnsRemaining == 0) {
                 this._appliedEffects.splice(i, 1);
             }
         }
     }
+
+    public dealDamage(damage: number): void {
+        this.health = this.health - damage;
+    }
     
     public applyAbility(caster: PlayerClass, ability: CharacterAbility, damage: number) {
         if(this.checkAbilityResist(ability.abilityID)) {
-            console.log(Logger.resist(this.classID, this.playerName, ability.abilityID, this.classID, this.playerName));
+            console.log(Logger.logResist(caster, ability.abilityID, this));
             return;
         }
 
         this.health = this.health - damage;
-        Logger.logAbilityUse(caster.classID, caster.playerName, this.classID, this.playerName, damage, ability.abilityID, ability.abilityType) ;
+        Logger.logAbilityUse(caster, this, damage, ability.abilityID, ability.abilityType);
     }
 
     public makeTurn(target: PlayerClass): void {
