@@ -3,12 +3,16 @@ import { PlayerGenerator } from "../src/playerGenerator";
 
 describe("PlayerGenerator class", () => {
   it("CreatePlayer method playerClass check", () => {
-    const player1: PlayerClass = PlayerGenerator.createPlayer(PlayerClasses.Paladin, "Arthur");
+    const player1: PlayerClass = PlayerGenerator.createPlayer(PlayerClasses.Paladin);
 
     expect(player1.classID).toBe(PlayerClasses.Paladin);
   });
 
   const player2: PlayerClass = PlayerGenerator.createPlayer(PlayerClasses.Archer, "George", 3, 8, 5);
+
+  it("CreatePlayer defined name", () => {
+    expect(player2.playerName).toBe("George");
+  });
 
   it("CreatePlayer defined strength", () => {
     expect(player2.strength).toBe(3);

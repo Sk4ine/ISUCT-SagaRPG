@@ -182,7 +182,7 @@ export abstract class PlayerClass extends Player {
 
     public makeTurn(target: PlayerClass): void {
         this.executeAppliedEffects();
-        if(this.health < 0) {
+        if(this.health <= 0) {
             return;
         }
 

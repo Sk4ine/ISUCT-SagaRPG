@@ -3,8 +3,14 @@ import { Paladin } from "./playerClasses/paladin";
 import { PlayerClass, PlayerClasses } from "./playerClasses/playerClass";
 
 export abstract class PlayerGenerator {
-  public static createPlayer(playerClass: PlayerClasses, name: string, strength?: number, maxHealth?: number, health?: number): PlayerClass {
+  private static playerNames: string[] = ["Arthur", "George", "Elyra", "Kareth", "Zerith", "Arven"];
+
+  public static createPlayer(playerClass: PlayerClasses, name?: string, strength?: number, maxHealth?: number, health?: number): PlayerClass {
     let newPlayer: PlayerClass;
+
+    if(name === undefined) {
+      name = this.playerNames[Math.floor(Math.random() * this.playerNames.length)];
+    }
 
     switch(playerClass) {
       case PlayerClasses.Paladin:
